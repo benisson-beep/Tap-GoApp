@@ -31,31 +31,42 @@ export const TransportCard: React.FC<TransportCardProps> = ({
 
   return (
     <div className="w-full">
-      {/* Visual Physical-Digital Card Container */}
+      {/* Visual Physical-Digital Card Container with Tap & Go / AC Mobility Signature Colors */}
       <div
-        className={`relative overflow-hidden rounded-3xl p-6 sm:p-7 text-white shadow-xl transition-all duration-300 ${
+        className={`relative overflow-hidden rounded-3xl p-6 sm:p-7 text-white shadow-cardGlow transition-all duration-300 ${
           isFrozen
             ? "bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 ring-2 ring-red-500/50"
-            : "bg-gradient-to-br from-navy-900 via-[#0E274A] to-[#143B6B] shadow-navy-900/25 ring-1 ring-white/15"
+            : "bg-gradient-to-br from-[#00A3E0] via-[#0E4B99] to-[#0B2050] ring-1 ring-white/20"
         }`}
       >
-        {/* Subtle geometric Rwandan-inspired wave / watermark background */}
-        <div className="absolute -right-12 -top-12 w-64 h-64 rounded-full bg-cyan-500/10 blur-2xl pointer-events-none" />
-        <div className="absolute -left-12 -bottom-12 w-64 h-64 rounded-full bg-blue-600/15 blur-2xl pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
+        {/* Dynamic Tap & Go Speed Wave Background Accents */}
+        <div className="absolute -right-16 -top-16 w-60 h-60 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+        <div className="absolute -left-12 -bottom-12 w-64 h-64 rounded-full bg-[#00A3E0]/30 blur-2xl pointer-events-none" />
+        
+        {/* Subtle geometric speed curve overlay (inspired by AC Mobility logo) */}
+        <div className="absolute top-0 right-0 w-72 h-72 border-[40px] border-white/5 rounded-full pointer-events-none transform translate-x-24 -translate-y-12" />
+        <div className="absolute bottom-0 right-1/4 w-48 h-48 border-[20px] border-cyan-300/10 rounded-full pointer-events-none transform translate-y-20" />
 
         {/* Card Header */}
-        <div className="relative z-10 flex items-start justify-between mb-6">
-          <div className="flex items-center gap-2.5">
-            <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
-              <span className="font-extrabold text-sm tracking-wider text-cyan-300">TG</span>
+        <div className="relative z-10 flex items-start justify-between mb-5">
+          <div className="flex items-center gap-3">
+            {/* Tap & Go circular emblem */}
+            <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-white text-[#0B2050] shadow-md">
+              <span className="font-black text-xs tracking-tighter text-[#00A3E0]">
+                Tap<span className="text-[#0B2050]">&amp;</span>Go
+              </span>
             </div>
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-white/90">
-                Tap & Go
-              </span>
-              <span className="block text-[10px] text-white/50 font-medium">
-                Rwanda Transport Pass
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-black uppercase tracking-wider text-white">
+                  Tap &amp; Go
+                </span>
+                <span className="text-[10px] px-1.5 py-0.2 rounded bg-white/20 text-white font-bold">
+                  RW
+                </span>
+              </div>
+              <span className="block text-[10px] text-cyan-100 font-medium">
+                Public Transport Pass
               </span>
             </div>
           </div>
@@ -66,7 +77,7 @@ export const TransportCard: React.FC<TransportCardProps> = ({
               className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold backdrop-blur-md border ${
                 isFrozen
                   ? "bg-red-500/20 text-red-200 border-red-500/30"
-                  : "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+                  : "bg-emerald-500/20 text-emerald-200 border-emerald-400/30"
               }`}
             >
               <span
@@ -78,25 +89,34 @@ export const TransportCard: React.FC<TransportCardProps> = ({
             </span>
 
             {/* Contactless Wave Icon */}
-            <div className="p-1.5 rounded-lg bg-white/5 text-white/70" title="Contactless NFC Enabled">
+            <div className="p-1.5 rounded-lg bg-white/10 text-white" title="Contactless NFC Enabled">
               <Wifi className="w-4 h-4 rotate-90" />
             </div>
           </div>
         </div>
 
-        {/* EMV Microchip graphic */}
-        <div className="relative z-10 flex items-center justify-between mb-5">
-          <div className="w-11 h-8 rounded-md bg-gradient-to-tr from-amber-300 via-amber-200 to-amber-400 border border-amber-500/40 p-1 flex flex-col justify-between shadow-xs">
-            <div className="w-full h-0.5 bg-amber-600/40" />
-            <div className="w-2/3 h-0.5 bg-amber-600/40" />
-            <div className="w-full h-0.5 bg-amber-600/40" />
+        {/* EMV Microchip Graphic & AC Mobility Signature Speed Lines */}
+        <div className="relative z-10 flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-8 rounded-md bg-gradient-to-tr from-amber-300 via-amber-200 to-amber-400 border border-amber-500/40 p-1 flex flex-col justify-between shadow-xs">
+              <div className="w-full h-0.5 bg-amber-700/40" />
+              <div className="w-2/3 h-0.5 bg-amber-700/40" />
+              <div className="w-full h-0.5 bg-amber-700/40" />
+            </div>
+
+            {/* AC Mobility Speed Lines indicator */}
+            <div className="flex flex-col gap-1 opacity-70">
+              <div className="w-4 h-[2px] bg-white rounded-full" />
+              <div className="w-6 h-[2px] bg-cyan-200 rounded-full" />
+              <div className="w-3 h-[2px] bg-white rounded-full" />
+            </div>
           </div>
 
           {/* Quick Balance visibility toggle */}
           <button
             type="button"
             onClick={() => setHideBalance(!hideBalance)}
-            className="text-white/60 hover:text-white p-1 rounded-md transition-colors"
+            className="text-white/80 hover:text-white p-1 rounded-md transition-colors bg-white/10"
             title={hideBalance ? "Show balance" : "Hide balance"}
           >
             {hideBalance ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -104,29 +124,29 @@ export const TransportCard: React.FC<TransportCardProps> = ({
         </div>
 
         {/* Balance Section */}
-        <div className="relative z-10 mb-6">
-          <span className="text-xs font-medium text-white/60 block uppercase tracking-wider">
+        <div className="relative z-10 mb-5">
+          <span className="text-[11px] font-semibold text-cyan-100 uppercase tracking-wider block">
             Available Balance
           </span>
-          <div className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mt-1">
+          <div className="text-3xl sm:text-4xl font-black tracking-tight text-white mt-1 drop-shadow-sm">
             {hideBalance ? "••••••••" : formatRWF(card.balance)}
           </div>
         </div>
 
-        {/* Card Number & Nickname Footer */}
-        <div className="relative z-10 flex items-end justify-between pt-3 border-t border-white/10">
+        {/* Card Number & AC Mobility Brand Signature Footer */}
+        <div className="relative z-10 flex items-end justify-between pt-3 border-t border-white/20">
           <div>
-            <span className="text-[10px] uppercase tracking-wider text-white/40 block">
+            <span className="text-[10px] uppercase tracking-wider text-cyan-200 block font-medium">
               {card.nickname || "Card Number"}
             </span>
             <div className="flex items-center gap-2 mt-0.5">
-              <span className="font-mono text-sm tracking-widest text-white/90">
+              <span className="font-mono text-sm tracking-widest text-white font-bold">
                 {formattedNumber}
               </span>
               <button
                 type="button"
                 onClick={() => setShowFullNumber(!showFullNumber)}
-                className="text-white/40 hover:text-white text-xs"
+                className="text-white/70 hover:text-white text-xs"
                 title="Toggle masking"
               >
                 {showFullNumber ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
@@ -134,25 +154,33 @@ export const TransportCard: React.FC<TransportCardProps> = ({
             </div>
           </div>
 
+          {/* AC Mobility watermark in card footer */}
           <div className="text-right">
-            <span className="text-[10px] uppercase tracking-wider text-white/40 block">
-              Expires
+            <div className="flex items-center gap-1.5 justify-end">
+              <div className="w-3 h-3 rounded-full border border-white flex items-center justify-center text-[7px] font-bold">
+                a
+              </div>
+              <span className="text-[11px] font-extrabold tracking-tight text-white">
+                mobility
+              </span>
+            </div>
+            <span className="text-[8px] text-cyan-100 uppercase tracking-wider block">
+              Smart transport redefined
             </span>
-            <span className="font-mono text-xs text-white/80">{card.expiryDate || "12/28"}</span>
           </div>
         </div>
       </div>
 
-      {/* Card Action Buttons (Under the card) */}
+      {/* Card Action Buttons */}
       {showActions && (
         <div className="grid grid-cols-2 gap-3 mt-4">
           {onTopUpClick ? (
             <Button
               variant="primary"
               size="lg"
-              className="w-full shadow-md bg-navy-900 hover:bg-navy-800 text-white rounded-2xl"
+              className="w-full shadow-md bg-[#00A3E0] hover:bg-[#008ec2] text-white rounded-2xl font-bold"
               onClick={onTopUpClick}
-              leftIcon={<PlusCircle className="w-5 h-5 text-cyan-400" />}
+              leftIcon={<PlusCircle className="w-5 h-5 text-white" />}
             >
               Top Up
             </Button>
@@ -161,8 +189,8 @@ export const TransportCard: React.FC<TransportCardProps> = ({
               <Button
                 variant="primary"
                 size="lg"
-                className="w-full shadow-md bg-navy-900 hover:bg-navy-800 text-white rounded-2xl"
-                leftIcon={<PlusCircle className="w-5 h-5 text-cyan-400" />}
+                className="w-full shadow-md bg-[#00A3E0] hover:bg-[#008ec2] text-white rounded-2xl font-bold"
+                leftIcon={<PlusCircle className="w-5 h-5 text-white" />}
               >
                 Top Up
               </Button>
@@ -172,7 +200,7 @@ export const TransportCard: React.FC<TransportCardProps> = ({
           <Button
             variant="outline"
             size="lg"
-            className="w-full rounded-2xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50"
+            className="w-full rounded-2xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 font-semibold"
             onClick={onViewDetails}
             rightIcon={<ArrowUpRight className="w-4 h-4 text-slate-400" />}
           >

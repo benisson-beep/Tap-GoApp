@@ -59,7 +59,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
   };
 
   const handleShare = async () => {
-    const shareText = `TapGo Rwanda Official Receipt\nTx: ${transaction.receiptNumber}\nAmount: RWF ${Math.abs(transaction.amount)}\nCard: ${transaction.maskedCardNumber}\nStatus: ${transaction.status.toUpperCase()}`;
+    const shareText = `TapGo Rwanda / AC Mobility Official Receipt\nTx: ${transaction.receiptNumber}\nAmount: RWF ${Math.abs(transaction.amount)}\nCard: ${transaction.maskedCardNumber}\nStatus: ${transaction.status.toUpperCase()}`;
 
     if (navigator.share) {
       try {
@@ -73,7 +73,6 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
       }
     }
 
-    // Clipboard fallback
     try {
       await navigator.clipboard.writeText(shareText);
       setCopied(true);
@@ -94,18 +93,20 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
       <div className="space-y-5">
         {/* Receipt Container Card */}
         <div className="relative p-5 sm:p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 space-y-4">
-          {/* Header watermark/seal */}
+          {/* Header with AC Mobility image */}
           <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-slate-700 pb-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-navy-900 dark:bg-brand-600 text-white flex items-center justify-center font-bold text-xs">
-                TG
-              </div>
-              <div>
-                <h4 className="text-sm font-bold text-slate-900 dark:text-white leading-none">
-                  TapGo Rwanda
+              <img
+                src="/images/ac-mobility.png"
+                alt="AC Mobility"
+                className="h-8 w-auto object-contain"
+              />
+              <div className="border-l border-slate-200 pl-2.5">
+                <h4 className="text-xs font-bold text-[#0B2050] dark:text-white leading-none">
+                  Tap &amp; Go
                 </h4>
-                <span className="text-[10px] text-slate-500 font-medium">
-                  Official Transport Receipt
+                <span className="text-[10px] text-slate-400 font-medium">
+                  Official Transport Pass
                 </span>
               </div>
             </div>
@@ -121,8 +122,8 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
               {isTopUp ? "Amount Recharged" : "Bus Commute Fare"}
             </span>
             <div
-              className={`text-3xl font-extrabold tracking-tight mt-0.5 ${
-                isTopUp ? "text-emerald-600 dark:text-emerald-400" : "text-slate-900 dark:text-white"
+              className={`text-3xl font-black tracking-tight mt-0.5 ${
+                isTopUp ? "text-emerald-600 dark:text-emerald-400" : "text-[#0B2050] dark:text-white"
               }`}
             >
               {isTopUp ? `+${formatRWF(transaction.amount)}` : formatRWF(transaction.amount)}
@@ -138,7 +139,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
               <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                 <Hash className="w-3.5 h-3.5 text-slate-400" /> Transaction Type
               </span>
-              <span className="font-semibold text-slate-800 dark:text-slate-200">
+              <span className="font-bold text-slate-800 dark:text-slate-200">
                 {isTopUp ? "Mobile Wallet Top-Up" : "City Bus Boarding Fare"}
               </span>
             </div>
@@ -148,7 +149,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
                 <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                   <Bus className="w-3.5 h-3.5 text-slate-400" /> Route
                 </span>
-                <span className="font-semibold text-slate-800 dark:text-slate-200 text-right">
+                <span className="font-bold text-slate-800 dark:text-slate-200 text-right">
                   {transaction.route}
                 </span>
               </div>
@@ -165,16 +166,16 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
 
             <div className="flex justify-between items-center py-1">
               <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                <CreditCard className="w-3.5 h-3.5 text-slate-400" /> Tap & Go Card
+                <CreditCard className="w-3.5 h-3.5 text-slate-400" /> Tap &amp; Go Card
               </span>
-              <span className="font-mono font-medium text-slate-800 dark:text-slate-200">
+              <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
                 {formatMaskedCard(transaction.maskedCardNumber, true)}
               </span>
             </div>
 
             <div className="flex justify-between items-center py-1">
               <span className="text-slate-500 dark:text-slate-400">Payment Method</span>
-              <span className="font-medium text-slate-800 dark:text-slate-200">
+              <span className="font-bold text-slate-800 dark:text-slate-200">
                 {transaction.paymentMethod === "mtn_momo"
                   ? "MTN MoMo"
                   : transaction.paymentMethod === "airtel_money"
@@ -185,7 +186,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
 
             <div className="flex justify-between items-center py-1">
               <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-slate-400" /> Date & Time
+                <Calendar className="w-3.5 h-3.5 text-slate-400" /> Date &amp; Time
               </span>
               <span className="text-slate-700 dark:text-slate-300">
                 {dateObj.toLocaleDateString("en-GB", {
@@ -212,9 +213,9 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
             )}
 
             <div className="flex justify-between items-center py-1">
-              <span className="text-slate-500 dark:text-slate-400">Regulatory Compliance</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-medium">
-                RURA Verified
+              <span className="text-slate-500 dark:text-slate-400">Network &amp; Regulation</span>
+              <span className="text-[#00A3E0] font-bold">
+                AC Mobility • RURA Approved
               </span>
             </div>
           </div>
@@ -225,7 +226,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
           <Button
             variant="outline"
             size="md"
-            className="w-full"
+            className="w-full font-bold"
             onClick={handleDownload}
             isLoading={isDownloading}
             leftIcon={<Download className="w-4 h-4" />}
@@ -236,7 +237,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
           <Button
             variant="secondary"
             size="md"
-            className="w-full"
+            className="w-full font-bold"
             onClick={handleShare}
             leftIcon={copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4" />}
           >

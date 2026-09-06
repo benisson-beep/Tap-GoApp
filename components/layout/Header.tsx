@@ -14,7 +14,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNotifications }) => {
   const { user, isDemoMode, toggleDemoMode } = useApp();
   const { unreadCount } = useNotifications();
 
-  // Greeting based on time of day
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return "Good morning";
@@ -30,7 +29,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNotifications }) => {
         {/* Left: User Profile info & Greeting */}
         <div className="flex items-center gap-3 min-w-0">
           <Link href="/profile" className="relative group shrink-0">
-            <div className="w-10 h-10 rounded-full bg-navy-900 text-white flex items-center justify-center font-semibold text-sm ring-2 ring-slate-100 dark:ring-slate-800 group-hover:ring-brand-500 transition-all">
+            <div className="w-10 h-10 rounded-full bg-[#0B2050] text-white flex items-center justify-center font-bold text-sm ring-2 ring-slate-100 dark:ring-slate-800 group-hover:ring-[#00A3E0] transition-all">
               {firstName.charAt(0)}
             </div>
             <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />
@@ -40,27 +39,45 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNotifications }) => {
             <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
               <span>{getGreeting()},</span>
               <span className="inline-flex items-center gap-0.5 text-[11px] text-slate-400 dark:text-slate-500 hidden sm:inline-flex">
-                <MapPin className="w-3 h-3" /> Kigali
+                <MapPin className="w-3 h-3 text-[#00A3E0]" /> Kigali
               </span>
             </div>
-            <h1 className="text-base font-bold text-slate-900 dark:text-white truncate">
+            <h1 className="text-base font-extrabold text-[#0B2050] dark:text-white truncate">
               {user.name}
             </h1>
           </div>
         </div>
 
+        {/* Center: AC Mobility Brand Badge (visible on mobile / tablet) */}
+        <div className="hidden sm:flex md:hidden items-center">
+          <img
+            src="/images/ac-mobility.png"
+            alt="AC Mobility"
+            className="h-7 w-auto object-contain"
+          />
+        </div>
+
         {/* Right: Demo mode switcher badge & Notification Bell */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
+          {/* AC Mobility mobile badge */}
+          <div className="sm:hidden flex items-center shrink-0">
+            <img
+              src="/images/ac-mobility.png"
+              alt="AC Mobility"
+              className="h-6 w-auto object-contain"
+            />
+          </div>
+
           {/* Demo Mode Toggle Badge */}
           <button
             type="button"
             onClick={toggleDemoMode}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border transition-colors bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60 hover:bg-amber-100"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-semibold border transition-colors bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60 hover:bg-amber-100"
             title="Click to toggle Demo / Sandbox simulation mode"
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            <span className="hidden sm:inline font-semibold">Mode:</span>
-            <span>{isDemoMode ? "Demo" : "Production"}</span>
+            <span className="hidden sm:inline font-bold">Mode:</span>
+            <span>{isDemoMode ? "Demo" : "Live"}</span>
           </button>
 
           {/* Notifications Button */}

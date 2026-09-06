@@ -27,6 +27,7 @@ import {
   ShieldCheck,
   KeyRound,
   AlertCircle,
+  Building2,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -38,7 +39,6 @@ export default function ProfilePage() {
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
 
-  // Form states for profile editing
   const [editName, setEditName] = useState(user.name);
   const [editPhone, setEditPhone] = useState(user.phone);
   const [editEmail, setEditEmail] = useState(user.email);
@@ -70,8 +70,8 @@ export default function ProfilePage() {
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-          Profile & Settings
+        <h1 className="text-2xl font-bold text-[#0B2050] dark:text-white">
+          Profile &amp; Settings
         </h1>
         <p className="text-xs text-slate-500 mt-0.5">
           Account credentials, security, and application preferences
@@ -87,7 +87,7 @@ export default function ProfilePage() {
       {/* Profile Overview Card */}
       <section className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-card">
         <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-          <div className="w-20 h-20 rounded-2xl bg-navy-900 text-white flex items-center justify-center font-black text-2xl ring-4 ring-slate-100 dark:ring-slate-800 shadow-md">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#0B2050] to-[#00A3E0] text-white flex items-center justify-center font-black text-2xl ring-4 ring-slate-100 dark:ring-slate-800 shadow-md">
             {user.name.charAt(0)}
           </div>
 
@@ -111,7 +111,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="mt-2 text-xs text-slate-400 flex items-center justify-center sm:justify-start gap-1.5">
-              <CreditCard className="w-3.5 h-3.5" />
+              <CreditCard className="w-3.5 h-3.5 text-[#00A3E0]" />
               <span>Primary Card: <strong className="text-slate-700 dark:text-slate-300 font-mono">{formatMaskedCard(activeCard.cardNumber)}</strong></span>
             </div>
           </div>
@@ -120,17 +120,43 @@ export default function ProfilePage() {
             variant="outline"
             size="sm"
             onClick={() => setIsEditProfileOpen(true)}
-            className="shrink-0"
+            className="shrink-0 font-semibold"
           >
             Edit Profile
           </Button>
         </div>
       </section>
 
+      {/* Official AC Mobility Network Card */}
+      <section className="p-5 rounded-2xl bg-gradient-to-br from-sky-50 to-blue-50/40 dark:from-slate-900 dark:to-slate-850 border border-sky-100 dark:border-slate-800 shadow-xs">
+        <div className="flex items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <img
+                src="/images/ac-mobility.png"
+                alt="AC Mobility"
+                className="h-8 w-auto object-contain"
+              />
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-300 pt-1">
+              TapGo Rwanda runs on the official <strong>AC Mobility Rwanda</strong> transit network powering Tap &amp; Go cards across all Kigali bus fleets.
+            </p>
+          </div>
+          <div className="text-right shrink-0 hidden sm:block">
+            <span className="text-[10px] uppercase font-bold text-[#00A3E0] tracking-wider block">
+              Operator
+            </span>
+            <span className="text-xs font-black text-[#0B2050] dark:text-white">
+              AC Mobility Rwanda
+            </span>
+          </div>
+        </div>
+      </section>
+
       {/* Security & Authentication */}
       <section className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-          Security & Access
+          Security &amp; Access
         </h3>
 
         <div className="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
@@ -156,14 +182,14 @@ export default function ProfilePage() {
                 onChange={handleToggleBiometrics}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-navy-900 dark:peer-checked:bg-brand-600"></div>
+              <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00A3E0]"></div>
             </label>
           </div>
 
           {/* Security PIN */}
           <div className="flex items-center justify-between py-3">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600">
+              <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-[#163B82]">
                 <KeyRound className="w-5 h-5" />
               </div>
               <div>
@@ -175,7 +201,7 @@ export default function ProfilePage() {
                 </span>
               </div>
             </div>
-            <Button variant="ghost" size="sm" className="text-xs text-brand-600">
+            <Button variant="ghost" size="sm" className="text-xs text-[#00A3E0] font-bold">
               Change PIN
             </Button>
           </div>
@@ -211,7 +237,7 @@ export default function ProfilePage() {
                 onClick={() => handleLanguageChange("en")}
                 className={`px-2.5 py-1 rounded-lg transition-colors ${
                   user.preferredLanguage === "en"
-                    ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs"
+                    ? "bg-[#00A3E0] text-white shadow-xs font-bold"
                     : "text-slate-500 hover:text-slate-900"
                 }`}
               >
@@ -222,7 +248,7 @@ export default function ProfilePage() {
                 onClick={() => handleLanguageChange("rw")}
                 className={`px-2.5 py-1 rounded-lg transition-colors ${
                   user.preferredLanguage === "rw"
-                    ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs"
+                    ? "bg-[#00A3E0] text-white shadow-xs font-bold"
                     : "text-slate-500 hover:text-slate-900"
                 }`}
               >
@@ -233,7 +259,7 @@ export default function ProfilePage() {
                 onClick={() => handleLanguageChange("fr")}
                 className={`px-2.5 py-1 rounded-lg transition-colors ${
                   user.preferredLanguage === "fr"
-                    ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs"
+                    ? "bg-[#00A3E0] text-white shadow-xs font-bold"
                     : "text-slate-500 hover:text-slate-900"
                 }`}
               >
@@ -265,6 +291,7 @@ export default function ProfilePage() {
             variant={isDemoMode ? "outline" : "primary"}
             size="sm"
             onClick={toggleDemoMode}
+            className="font-bold"
           >
             Switch to {isDemoMode ? "Production" : "Demo"}
           </Button>
@@ -280,7 +307,7 @@ export default function ProfilePage() {
           <button
             type="button"
             onClick={resetToMockData}
-            className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1 underline"
+            className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1 underline font-medium"
           >
             <RotateCcw className="w-3.5 h-3.5" /> Reset all local demo data
           </button>
@@ -296,7 +323,7 @@ export default function ProfilePage() {
         >
           <div className="flex items-center gap-3">
             <FileText className="w-4 h-4 text-slate-400" />
-            <span>Terms & Public Transport Conditions</span>
+            <span>Terms &amp; Public Transport Conditions</span>
           </div>
           <ChevronRight className="w-4 h-4 text-slate-400" />
         </button>
@@ -319,7 +346,7 @@ export default function ProfilePage() {
         >
           <div className="flex items-center gap-3">
             <HelpCircle className="w-4 h-4 text-slate-400" />
-            <span>RURA Passenger Support Center (Toll Free 3012)</span>
+            <span>AC Mobility &amp; RURA Support (Toll Free 3012)</span>
           </div>
           <ChevronRight className="w-4 h-4 text-slate-400" />
         </a>
@@ -327,7 +354,7 @@ export default function ProfilePage() {
         <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
           <Button
             variant="ghost"
-            className="w-full text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 justify-center"
+            className="w-full text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 justify-center font-bold"
             onClick={() => setIsLogoutModalOpen(true)}
             leftIcon={<LogOut className="w-4 h-4" />}
           >
@@ -384,7 +411,7 @@ export default function ProfilePage() {
           </div>
 
           <div className="pt-2">
-            <Button type="submit" variant="primary" className="w-full">
+            <Button type="submit" variant="primary" className="w-full font-bold">
               Save Changes
             </Button>
           </div>
@@ -420,15 +447,15 @@ export default function ProfilePage() {
       <Modal
         isOpen={isTermsModalOpen}
         onClose={() => setIsTermsModalOpen(false)}
-        title="Terms & Conditions"
+        title="Terms &amp; Conditions"
         description="TapGo Rwanda Commuter Agreement"
       >
         <div className="text-xs text-slate-600 dark:text-slate-300 space-y-3 leading-relaxed">
           <p>
-            1. <strong>Card Usage:</strong> Tap & Go passes issued by authorized transport operators in Rwanda remain valid across all designated Kigali city public buses (KBS, Royal Express, Jali Transport).
+            1. <strong>Card Usage:</strong> Tap &amp; Go passes issued by AC Mobility Rwanda remain valid across all designated Kigali city public buses (KBS, Royal Express, Jali Transport).
           </p>
           <p>
-            2. <strong>Fares & Compliance:</strong> Bus fares are regulated by the Rwanda Utilities Regulatory Authority (RURA). Passengers must tap in upon boarding each bus trip.
+            2. <strong>Fares &amp; Compliance:</strong> Bus fares are regulated by the Rwanda Utilities Regulatory Authority (RURA). Passengers must tap in upon boarding each bus trip.
           </p>
           <p>
             3. <strong>Wallet Top-ups:</strong> Mobile money recharges through MTN MoMo and Airtel Money are processed instantly without additional surcharge to the passenger.

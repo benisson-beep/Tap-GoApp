@@ -11,23 +11,29 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          50: "#f0f7ff",
-          100: "#e0effe",
-          200: "#bae0fd",
-          300: "#7cc8fb",
-          400: "#36aaf5",
-          500: "#0c8ee9",
-          600: "#026fc7",
-          700: "#0359a1",
-          800: "#074b85",
-          900: "#0b3f6f",
-          950: "#07284a",
+          50: "#f0f9ff",
+          100: "#e0f2fe",
+          200: "#bae6fd",
+          300: "#7dd3fc",
+          400: "#38bdf8",
+          500: "#00A3E0", // AC Mobility signature cyan
+          600: "#008ec2",
+          700: "#00739e",
+          800: "#005a7a",
+          900: "#00425a",
+          950: "#002838",
+        },
+        ac: {
+          cyan: "#00A3E0",
+          royal: "#163B82",
+          navy: "#0B2050",
+          dark: "#071533",
         },
         navy: {
-          800: "#132338",
-          850: "#0f1c2e",
-          900: "#0B192C",
-          950: "#060E18",
+          800: "#112852",
+          850: "#0e2247",
+          900: "#0B1C3B",
+          950: "#061024",
         },
         momo: {
           yellow: "#FFCC00",
@@ -43,9 +49,10 @@ const config: Config = {
         },
       },
       boxShadow: {
-        fintech: "0 10px 25px -5px rgba(11, 25, 44, 0.08), 0 8px 10px -6px rgba(11, 25, 44, 0.04)",
-        card: "0 4px 20px -2px rgba(11, 25, 44, 0.06), 0 2px 6px -1px rgba(11, 25, 44, 0.03)",
-        glow: "0 0 25px -3px rgba(2, 111, 199, 0.25)",
+        fintech: "0 10px 25px -5px rgba(11, 32, 80, 0.08), 0 8px 10px -6px rgba(11, 32, 80, 0.04)",
+        card: "0 4px 20px -2px rgba(11, 32, 80, 0.06), 0 2px 6px -1px rgba(11, 32, 80, 0.03)",
+        glow: "0 0 25px -3px rgba(0, 163, 224, 0.35)",
+        cardGlow: "0 12px 30px -5px rgba(0, 163, 224, 0.25), 0 4px 12px -2px rgba(11, 32, 80, 0.2)",
       },
       borderRadius: {
         '2xl': '1rem',
