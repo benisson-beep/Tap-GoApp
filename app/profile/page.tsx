@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useApp } from "@/context/AppContext";
 import { Button } from "@/components/common/Button";
 import { Badge } from "@/components/common/Badge";
@@ -28,20 +29,32 @@ import {
   KeyRound,
   AlertCircle,
   Building2,
+  LogIn,
 } from "lucide-react";
 import Link from "next/link";
 
 export default function ProfilePage() {
-  const { user, activeCard, isDemoMode, toggleDemoMode, updateUser, resetToMockData } = useApp();
+  const router = useRouter();
+  const {
+    user,
+    activeCard,
+    isAuthenticated,
+    logout,
+    login,
+    isDemoMode,
+    toggleDemoMode,
+    updateUser,
+    resetToMockData,
+  } = useApp();
 
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
 
-  const [editName, setEditName] = useState(user.name);
-  const [editPhone, setEditPhone] = useState(user.phone);
-  const [editEmail, setEditEmail] = useState(user.email);
+  const [editName, setEditName] = useState(user?.name || "");
+  const [editPhone, setEditPhone] = useState(user?.phone || "");
+  const [editEmail, setEditEmail] = useState(user?.email || "");
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
   const handleSaveProfile = (e: React.FormEvent) => {
@@ -57,7 +70,9 @@ export default function ProfilePage() {
   };
 
   const handleToggleBiometrics = () => {
-    updateUser({ biometricsEnabled: !user.biometricsEnabled });
+    if (user) {
+      updateUser({ biometricsEnabled: !user.biometricsEnabled });
+    }
   };
 
   const handleLanguageChange = (lang: "en" | "rw" | "fr") => {
@@ -65,6 +80,45 @@ export default function ProfilePage() {
     setFeedbackMsg(`Language updated to ${lang.toUpperCase()}`);
     setTimeout(() => setFeedbackMsg(null), 2500);
   };
+
+  const handleExecuteLogout = () => {
+    logout();
+    setIsLogoutModalOpen(false);
+    router.push("/auth/login");
+  };
+
+  // If user is logged out, show clean login prompt
+  if (!isAuthenticated || !user) {
+    return (
+      <div className="max-w-md mx-auto py-12 text-center space-y-5">
+        <div className="w-16 h-16 rounded-3xl bg-slate-100 dark:bg-slate-800 text-slate-400 mx-auto flex items-center justify-center">
+          <User className="w-8 h-8" />
+        </div>
+        <div className="space-y-1.5">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+            You are logged out
+          </h2>
+          <p className="text-xs text-slate-500">
+            Sign in to view your profile credentials, registered passes, and wallet security settings.
+          </p>
+        </div>
+        <div className="space-y-2.5 pt-2">
+          <Link href="/auth/login" className="block">
+            <Button variant="primary" size="lg" className="w-full bg-[#00A3E0] hover:bg-[#008ec2] text-white font-bold" leftIcon={<LogIn className="w-4 h-4" />}>
+              Sign In to TapGo
+            </Button>
+          </Link>
+          <button
+            type="button"
+            onClick={() => login()}
+            className="w-full py-2.5 px-4 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50"
+          >
+            Quick Fill Demo Commuter (Jean Bosco)
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -119,7 +173,12 @@ export default function ProfilePage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setIsEditProfileOpen(true)}
+            onClick={() => {
+              setEditName(user.name);
+              setEditPhone(user.phone);
+              setEditEmail(user.email);
+              setIsEditProfileOpen(true);
+            }}
             className="shrink-0 font-semibold"
           >
             Edit Profile
@@ -428,17 +487,19 @@ export default function ProfilePage() {
       >
         <div className="space-y-4 pt-1">
           <p className="text-xs text-slate-500">
-            You will need your phone number and PIN to sign back into your transport wallet.
+            Logging out will clear your active balance and card credentials from this device. You will need your PIN to sign back in.
           </p>
           <div className="grid grid-cols-2 gap-3">
             <Button variant="outline" onClick={() => setIsLogoutModalOpen(false)}>
               Cancel
             </Button>
-            <Link href="/auth/login" className="w-full">
-              <Button variant="danger" className="w-full">
-                Log Out
-              </Button>
-            </Link>
+            <Button
+              variant="danger"
+              className="w-full"
+              onClick={handleExecuteLogout}
+            >
+              Log Out
+            </Button>
           </div>
         </div>
       </Modal>

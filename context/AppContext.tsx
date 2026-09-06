@@ -9,13 +9,28 @@ import { cardService } from "@/services/cards/card-service";
 import { useNotifications } from "./NotificationContext";
 import { formatRWF } from "@/lib/formatters";
 
+export const UNLINKED_CARD: TransportCard = {
+  id: "card_unlinked",
+  userId: "",
+  cardNumber: "0000000000000000",
+  maskedCardNumber: "•••• ••••",
+  nickname: "No Card Linked",
+  balance: 0,
+  status: "unregistered",
+  isPrimary: false,
+  registeredAt: "",
+};
+
 interface AppContextType {
-  user: UserProfile;
+  isAuthenticated: boolean;
+  user: UserProfile | null;
   cards: TransportCard[];
   activeCard: TransportCard;
   transactions: Transaction[];
   isDemoMode: boolean;
   isLoading: boolean;
+  login: (profile?: Partial<UserProfile>) => void;
+  logout: () => void;
   setActiveCard: (card: TransportCard) => void;
   topUpActiveCard: (
     amount: number,
@@ -39,8 +54,20 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { addNotification } = useNotifications();
 
-  const [user, setUser] = useState<UserProfile>(() => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
+      const authFlag = localStorage.getItem("tapgo_auth_logged_in");
+      if (authFlag !== null) {
+        return authFlag === "true";
+      }
+    }
+    return true; // Default start
+  });
+
+  const [user, setUser] = useState<UserProfile | null>(() => {
+    if (typeof window !== "undefined") {
+      const authFlag = localStorage.getItem("tapgo_auth_logged_in");
+      if (authFlag === "false") return null;
       const saved = localStorage.getItem("tapgo_user");
       if (saved) {
         try {
@@ -55,6 +82,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [cards, setCards] = useState<TransportCard[]>(() => {
     if (typeof window !== "undefined") {
+      const authFlag = localStorage.getItem("tapgo_auth_logged_in");
+      if (authFlag === "false") return [];
       const saved = localStorage.getItem("tapgo_cards");
       if (saved) {
         try {
@@ -69,6 +98,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
     if (typeof window !== "undefined") {
+      const authFlag = localStorage.getItem("tapgo_auth_logged_in");
+      if (authFlag === "false") return [];
       const saved = localStorage.getItem("tapgo_transactions");
       if (saved) {
         try {
@@ -84,20 +115,59 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isDemoMode, setIsDemoMode] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Active card: primary card or first card
-  const activeCard = cards.find((c) => c.isPrimary) || cards[0] || MOCK_CARDS[0];
+  // Active card: primary card or first card, or unlinked blank card when logged out
+  const activeCard =
+    isAuthenticated && cards.length > 0
+      ? cards.find((c) => c.isPrimary) || cards[0]
+      : UNLINKED_CARD;
 
   useEffect(() => {
-    localStorage.setItem("tapgo_user", JSON.stringify(user));
-  }, [user]);
+    if (user && isAuthenticated) {
+      localStorage.setItem("tapgo_user", JSON.stringify(user));
+    }
+  }, [user, isAuthenticated]);
 
   useEffect(() => {
-    localStorage.setItem("tapgo_cards", JSON.stringify(cards));
-  }, [cards]);
+    if (isAuthenticated) {
+      localStorage.setItem("tapgo_cards", JSON.stringify(cards));
+    }
+  }, [cards, isAuthenticated]);
 
   useEffect(() => {
-    localStorage.setItem("tapgo_transactions", JSON.stringify(transactions));
-  }, [transactions]);
+    if (isAuthenticated) {
+      localStorage.setItem("tapgo_transactions", JSON.stringify(transactions));
+    }
+  }, [transactions, isAuthenticated]);
+
+  const login = (profile?: Partial<UserProfile>) => {
+    const loggedInUser: UserProfile = profile
+      ? { ...MOCK_USER, ...profile }
+      : MOCK_USER;
+    setIsAuthenticated(true);
+    setUser(loggedInUser);
+    setCards(MOCK_CARDS);
+    setTransactions(MOCK_TRANSACTIONS);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("tapgo_auth_logged_in", "true");
+      localStorage.setItem("tapgo_user", JSON.stringify(loggedInUser));
+      localStorage.setItem("tapgo_cards", JSON.stringify(MOCK_CARDS));
+      localStorage.setItem("tapgo_transactions", JSON.stringify(MOCK_TRANSACTIONS));
+    }
+  };
+
+  const logout = () => {
+    setIsAuthenticated(false);
+    setUser(null);
+    setCards([]);
+    setTransactions([]);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("tapgo_auth_logged_in", "false");
+      localStorage.removeItem("tapgo_user");
+      localStorage.removeItem("tapgo_cards");
+      localStorage.removeItem("tapgo_transactions");
+      localStorage.removeItem("tapgo_session_v1");
+    }
+  };
 
   const setActiveCard = (cardToSet: TransportCard) => {
     setCards((prev) =>
@@ -121,7 +191,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     const newTransaction: Transaction = {
       id: txId,
-      userId: user.id,
+      userId: user?.id || "usr_guest",
       cardId: activeCard.id,
       maskedCardNumber: activeCard.maskedCardNumber,
       type: "top_up",
@@ -137,15 +207,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       receiptNumber: receiptNo,
     };
 
-    // Update active card balance
     setCards((prev) =>
       prev.map((c) => (c.id === activeCard.id ? { ...c, balance: newBalance } : c))
     );
 
-    // Add transaction to beginning of list
     setTransactions((prev) => [newTransaction, ...prev]);
 
-    // Send in-app notification
     addNotification({
       type: "top_up",
       title: "Top Up Successful",
@@ -199,6 +266,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const simulateBusRideDeduction = (fare = 500, route = "Kigali Downtown → Kimironko") => {
+    if (!isAuthenticated) return;
+
     if (activeCard.balance < fare) {
       addNotification({
         type: "low_balance",
@@ -213,7 +282,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const now = new Date().toISOString();
     const tx: Transaction = {
       id: `tx_${Date.now()}`,
-      userId: user.id,
+      userId: user?.id || "usr_guest",
       cardId: activeCard.id,
       maskedCardNumber: activeCard.maskedCardNumber,
       type: "bus_fare",
@@ -255,7 +324,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateUser = (profile: Partial<UserProfile>) => {
-    setUser((prev) => ({ ...prev, ...profile }));
+    setUser((prev) => (prev ? { ...prev, ...profile } : null));
   };
 
   const toggleDemoMode = () => {
@@ -263,24 +332,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const resetToMockData = () => {
+    setIsAuthenticated(true);
     setUser(MOCK_USER);
     setCards(MOCK_CARDS);
     setTransactions(MOCK_TRANSACTIONS);
-    localStorage.removeItem("tapgo_user");
-    localStorage.removeItem("tapgo_cards");
-    localStorage.removeItem("tapgo_transactions");
-    localStorage.removeItem("tapgo_notifications");
+    if (typeof window !== "undefined") {
+      localStorage.setItem("tapgo_auth_logged_in", "true");
+      localStorage.setItem("tapgo_user", JSON.stringify(MOCK_USER));
+      localStorage.setItem("tapgo_cards", JSON.stringify(MOCK_CARDS));
+      localStorage.setItem("tapgo_transactions", JSON.stringify(MOCK_TRANSACTIONS));
+      localStorage.removeItem("tapgo_notifications");
+    }
   };
 
   return (
     <AppContext.Provider
       value={{
+        isAuthenticated,
         user,
         cards,
         activeCard,
         transactions,
         isDemoMode,
         isLoading,
+        login,
+        logout,
         setActiveCard,
         topUpActiveCard,
         linkNewCard,

@@ -13,6 +13,7 @@ import {
   Bus,
   ShieldCheck,
   Sparkles,
+  LogIn,
 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { useNotifications } from "@/context/NotificationContext";
@@ -21,7 +22,7 @@ import { cn } from "@/lib/utils";
 
 export const DesktopSidebar: React.FC = () => {
   const pathname = usePathname();
-  const { user, activeCard, isDemoMode, toggleDemoMode, simulateBusRideDeduction } = useApp();
+  const { user, activeCard, isAuthenticated, isDemoMode, toggleDemoMode, simulateBusRideDeduction } = useApp();
   const { unreadCount } = useNotifications();
 
   const navLinks = [
@@ -29,7 +30,7 @@ export const DesktopSidebar: React.FC = () => {
     { label: "Cards", href: "/cards", icon: CreditCard },
     { label: "Top Up Wallet", href: "/top-up", icon: PlusCircle },
     { label: "Activity & Receipts", href: "/transactions", icon: History },
-    { label: "Notifications", href: "/notifications", icon: Bell, badge: unreadCount },
+    { label: "Notifications", href: "/notifications", icon: Bell, badge: isAuthenticated ? unreadCount : 0 },
     { label: "Profile & Settings", href: "/profile", icon: User },
   ];
 
@@ -40,7 +41,6 @@ export const DesktopSidebar: React.FC = () => {
         {/* Brand with AC Mobility image */}
         <Link href="/" className="block space-y-2 px-1">
           <div className="flex items-center gap-2.5">
-            {/* Embedded AC Mobility Image */}
             <img
               src="/images/ac-mobility.png"
               alt="AC Mobility - Smart transport redefined"
@@ -56,23 +56,38 @@ export const DesktopSidebar: React.FC = () => {
           </div>
         </Link>
 
-        {/* Mini Active Card Widget with AC Mobility styling */}
+        {/* Mini Active Card Widget */}
         <div className="p-3.5 rounded-2xl bg-gradient-to-br from-slate-50 to-blue-50/50 dark:from-slate-800/60 dark:to-slate-900 border border-blue-100 dark:border-slate-700/60 shadow-xs">
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1.5">
-            <span className="font-semibold text-slate-600 dark:text-slate-300">Tap &amp; Go Card</span>
-            <span className="text-[11px] font-mono font-bold text-[#00A3E0]">{activeCard.maskedCardNumber}</span>
+            <span className="font-semibold text-slate-600 dark:text-slate-300">
+              {isAuthenticated ? "Tap & Go Card" : "Transport Card"}
+            </span>
+            <span className="text-[11px] font-mono font-bold text-[#00A3E0]">
+              {isAuthenticated ? activeCard.maskedCardNumber : "•••• ••••"}
+            </span>
           </div>
           <div className="text-xl font-black text-[#0B2050] dark:text-white">
-            {formatRWF(activeCard.balance)}
+            {isAuthenticated ? formatRWF(activeCard.balance) : "••••••••"}
           </div>
           <div className="mt-2.5 pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-[11px]">
-            <span className="text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Active Pass
-            </span>
-            <Link href="/top-up" className="text-[#00A3E0] hover:text-[#008ec2] font-bold">
-              + Top Up
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <span className="text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Active Pass
+                </span>
+                <Link href="/top-up" className="text-[#00A3E0] hover:text-[#008ec2] font-bold">
+                  + Top Up
+                </Link>
+              </>
+            ) : (
+              <>
+                <span className="text-slate-400 font-medium">Logged Out</span>
+                <Link href="/auth/login" className="text-[#00A3E0] hover:text-[#008ec2] font-bold">
+                  Sign In →
+                </Link>
+              </>
+            )}
           </div>
         </div>
 
@@ -114,22 +129,24 @@ export const DesktopSidebar: React.FC = () => {
       {/* Bottom Section */}
       <div className="space-y-3 pt-4 border-t border-slate-200/80 dark:border-slate-800">
         {/* Quick Bus Simulator */}
-        <div className="bg-sky-50 dark:bg-sky-950/30 border border-sky-200/60 dark:border-sky-900/50 rounded-xl p-3">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-[#0B2050] dark:text-sky-300 mb-1">
-            <Bus className="w-3.5 h-3.5 text-[#00A3E0]" />
-            <span>Simulate Bus Boarding</span>
+        {isAuthenticated && (
+          <div className="bg-sky-50 dark:bg-sky-950/30 border border-sky-200/60 dark:border-sky-900/50 rounded-xl p-3">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-[#0B2050] dark:text-sky-300 mb-1">
+              <Bus className="w-3.5 h-3.5 text-[#00A3E0]" />
+              <span>Simulate Bus Boarding</span>
+            </div>
+            <p className="text-[11px] text-slate-600 dark:text-slate-300 mb-2">
+              Tap KBS Downtown → Kimironko (-500 RWF).
+            </p>
+            <button
+              type="button"
+              onClick={() => simulateBusRideDeduction(500, "Downtown → Kimironko")}
+              className="w-full text-xs py-1.5 bg-[#00A3E0] hover:bg-[#008ec2] text-white font-bold rounded-lg transition-colors shadow-xs"
+            >
+              Tap Bus Validator
+            </button>
           </div>
-          <p className="text-[11px] text-slate-600 dark:text-slate-300 mb-2">
-            Tap KBS Downtown → Kimironko (-500 RWF).
-          </p>
-          <button
-            type="button"
-            onClick={() => simulateBusRideDeduction(500, "Downtown → Kimironko")}
-            className="w-full text-xs py-1.5 bg-[#00A3E0] hover:bg-[#008ec2] text-white font-bold rounded-lg transition-colors shadow-xs"
-          >
-            Tap Bus Validator
-          </button>
-        </div>
+        )}
 
         {/* Demo Mode Toggle */}
         <button
@@ -146,22 +163,32 @@ export const DesktopSidebar: React.FC = () => {
           </span>
         </button>
 
-        {/* User Card */}
-        <Link
-          href="/profile"
-          className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
-        >
-          <div className="w-9 h-9 rounded-full bg-[#0B2050] text-white flex items-center justify-center font-bold text-xs shrink-0">
-            {user.name.charAt(0)}
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-xs font-semibold text-slate-900 dark:text-white truncate">
-              {user.name}
+        {/* User Card / Sign In Action */}
+        {isAuthenticated && user ? (
+          <Link
+            href="/profile"
+            className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+          >
+            <div className="w-9 h-9 rounded-full bg-[#0B2050] text-white flex items-center justify-center font-bold text-xs shrink-0">
+              {user.name.charAt(0)}
             </div>
-            <div className="text-[11px] text-slate-400 truncate">{user.phone}</div>
-          </div>
-          <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
-        </Link>
+            <div className="min-w-0 flex-1">
+              <div className="text-xs font-semibold text-slate-900 dark:text-white truncate">
+                {user.name}
+              </div>
+              <div className="text-[11px] text-slate-400 truncate">{user.phone}</div>
+            </div>
+            <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+          </Link>
+        ) : (
+          <Link
+            href="/auth/login"
+            className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#00A3E0] hover:bg-[#008ec2] text-white font-bold text-xs shadow-sm transition-all"
+          >
+            <LogIn className="w-4 h-4" />
+            <span>Sign In to Your Wallet</span>
+          </Link>
+        )}
       </div>
     </aside>
   );

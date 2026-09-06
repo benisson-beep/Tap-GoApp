@@ -19,23 +19,57 @@ import {
   Clock,
   MapPin,
   ExternalLink,
+  LogIn,
 } from "lucide-react";
 import Link from "next/link";
 import { TransportCard as TransportCardType } from "@/types/card";
 
 export default function CardsPage() {
-  const { cards, activeCard, setActiveCard, toggleFreezeCard } = useApp();
+  const { cards, activeCard, isAuthenticated, login, setActiveCard, toggleFreezeCard } = useApp();
 
   const [selectedCardForDetails, setSelectedCardForDetails] = useState<TransportCardType | null>(null);
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
+
+  // If logged out, show sign-in gate
+  if (!isAuthenticated) {
+    return (
+      <div className="max-w-md mx-auto py-12 text-center space-y-5">
+        <div className="w-16 h-16 rounded-3xl bg-slate-100 dark:bg-slate-800 text-slate-400 mx-auto flex items-center justify-center">
+          <CreditCard className="w-8 h-8 text-[#00A3E0]" />
+        </div>
+        <div className="space-y-1.5">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+            Sign In to Manage Cards
+          </h2>
+          <p className="text-xs text-slate-500">
+            Log in to view your registered Tap &amp; Go passes, check active balances, and link new transport cards.
+          </p>
+        </div>
+        <div className="space-y-2.5 pt-2">
+          <Link href="/auth/login" className="block">
+            <Button variant="primary" size="lg" className="w-full bg-[#00A3E0] hover:bg-[#008ec2] text-white font-bold" leftIcon={<LogIn className="w-4 h-4" />}>
+              Sign In to TapGo
+            </Button>
+          </Link>
+          <button
+            type="button"
+            onClick={() => login()}
+            className="w-full py-2.5 px-4 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50"
+          >
+            Quick Fill Demo Commuter (Jean Bosco)
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto space-y-7">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-            My Tap & Go Cards
+          <h1 className="text-2xl font-bold text-[#0B2050] dark:text-white">
+            My Tap &amp; Go Cards
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
             Manage your transport smart passes, limits, and security
@@ -47,7 +81,7 @@ export default function CardsPage() {
           size="sm"
           onClick={() => setIsLinkModalOpen(true)}
           leftIcon={<Plus className="w-4 h-4" />}
-          className="shadow-xs"
+          className="shadow-xs bg-[#00A3E0] hover:bg-[#008ec2] text-white font-bold"
         >
           Link Card
         </Button>
@@ -56,7 +90,7 @@ export default function CardsPage() {
       {/* Primary Card Showcase */}
       <section className="space-y-3">
         <div className="flex items-center justify-between px-1">
-          <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Primary Travel Pass
           </span>
           <Badge variant="brand" size="sm">
@@ -74,7 +108,7 @@ export default function CardsPage() {
       {/* Other Registered Cards List */}
       <section className="space-y-3">
         <div className="flex items-center justify-between px-1">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             All Registered Cards ({cards.length})
           </h2>
         </div>
@@ -92,7 +126,7 @@ export default function CardsPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 font-bold text-xs shrink-0">
-                      <CreditCard className="w-5 h-5" />
+                      <CreditCard className="w-5 h-5 text-[#00A3E0]" />
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
@@ -100,7 +134,7 @@ export default function CardsPage() {
                           {card.nickname || "Tap & Go Pass"}
                         </h4>
                         {isPrimary && (
-                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-[#008ec2] font-bold">
                             Primary
                           </span>
                         )}
@@ -112,7 +146,7 @@ export default function CardsPage() {
                   </div>
 
                   <div className="text-right shrink-0">
-                    <div className="text-base font-bold text-slate-900 dark:text-white">
+                    <div className="text-base font-black text-[#0B2050] dark:text-white">
                       {formatRWF(card.balance)}
                     </div>
                     <Badge variant={isFrozen ? "error" : "success"} size="sm" dot>
@@ -145,7 +179,7 @@ export default function CardsPage() {
                       <button
                         type="button"
                         onClick={() => setActiveCard(card)}
-                        className="text-[11px] font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 flex items-center gap-1 ml-2"
+                        className="text-[11px] font-medium text-[#00A3E0] hover:text-[#008ec2] flex items-center gap-1 ml-2 font-bold"
                       >
                         <CheckCircle className="w-3 h-3" /> Make Primary
                       </button>
@@ -154,7 +188,7 @@ export default function CardsPage() {
                     <button
                       type="button"
                       onClick={() => setSelectedCardForDetails(card)}
-                      className="text-[11px] font-semibold text-slate-800 dark:text-slate-200 ml-2 hover:underline"
+                      className="text-[11px] font-bold text-[#0B2050] dark:text-slate-200 ml-2 hover:underline"
                     >
                       Inspect →
                     </button>
@@ -171,10 +205,10 @@ export default function CardsPage() {
         <HelpCircle className="w-5 h-5 text-slate-500 shrink-0 mt-0.5" />
         <div className="text-xs text-slate-600 dark:text-slate-300 space-y-1">
           <h4 className="font-bold text-slate-900 dark:text-white">
-            Need a new Tap & Go physical card?
+            Need a new Tap &amp; Go physical card?
           </h4>
           <p>
-            You can purchase a new card for RWF 1,000 at any AC Group / Tap & Go service agent kiosk at Nyabugogo, Kimironko, Remera, or Downtown bus stations.
+            You can purchase a new card for RWF 1,000 at any AC Mobility / Tap &amp; Go service agent kiosk at Nyabugogo, Kimironko, Remera, or Downtown bus stations.
           </p>
         </div>
       </section>

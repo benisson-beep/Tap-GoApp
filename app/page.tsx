@@ -7,6 +7,7 @@ import { TransportCard } from "@/components/cards/TransportCard";
 import { CardDetailsModal } from "@/components/cards/CardDetailsModal";
 import { TransactionItem } from "@/components/transactions/TransactionItem";
 import { ReceiptModal } from "@/components/transactions/ReceiptModal";
+import { EmptyState } from "@/components/common/EmptyState";
 import { Transaction } from "@/types/transaction";
 import { KIGALI_POPULAR_ROUTES } from "@/data/mock-data";
 import { formatRWF } from "@/lib/formatters";
@@ -20,12 +21,14 @@ import {
   Sparkles,
   ShieldCheck,
   Zap,
+  LogIn,
 } from "lucide-react";
 
 export default function HomePage() {
   const {
     activeCard,
     transactions,
+    isAuthenticated,
     toggleFreezeCard,
     setActiveCard,
     simulateBusRideDeduction,
@@ -83,7 +86,7 @@ export default function HomePage() {
         </h2>
         <div className="grid grid-cols-4 gap-2.5 sm:gap-3">
           <Link
-            href="/top-up"
+            href={isAuthenticated ? "/top-up" : "/auth/login"}
             className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs hover:border-[#00A3E0] hover:shadow-card transition-all group select-none text-center"
           >
             <div className="w-11 h-11 rounded-2xl bg-sky-50 dark:bg-sky-950/50 text-[#00A3E0] flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
@@ -98,7 +101,7 @@ export default function HomePage() {
           </Link>
 
           <Link
-            href="/transactions"
+            href={isAuthenticated ? "/transactions" : "/auth/login"}
             className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-card transition-all group select-none text-center"
           >
             <div className="w-11 h-11 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
@@ -113,7 +116,7 @@ export default function HomePage() {
           </Link>
 
           <Link
-            href="/cards"
+            href={isAuthenticated ? "/cards" : "/auth/login"}
             className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-card transition-all group select-none text-center"
           >
             <div className="w-11 h-11 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-[#163B82] dark:text-blue-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
@@ -173,54 +176,74 @@ export default function HomePage() {
                 <span className="font-extrabold text-[#0B2050] dark:text-white font-mono">
                   {formatRWF(route.fare)}
                 </span>
-                <button
-                  type="button"
-                  onClick={() => simulateBusRideDeduction(route.fare, `${route.from} → ${route.to}`)}
-                  className="px-2 py-1 rounded-lg bg-[#00A3E0] hover:bg-[#008ec2] text-white text-[10px] font-bold transition-colors shadow-2xs"
-                  title="Simulate boarding this bus line"
-                >
-                  Tap Board
-                </button>
+                {isAuthenticated && (
+                  <button
+                    type="button"
+                    onClick={() => simulateBusRideDeduction(route.fare, `${route.from} → ${route.to}`)}
+                    className="px-2 py-1 rounded-lg bg-[#00A3E0] hover:bg-[#008ec2] text-white text-[10px] font-bold transition-colors shadow-2xs"
+                    title="Simulate boarding this bus line"
+                  >
+                    Tap Board
+                  </button>
+                )}
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* 5. RECENT ACTIVITY (Live Transactions) */}
+      {/* 5. RECENT ACTIVITY */}
       <section aria-label="Recent Transactions">
         <div className="flex items-center justify-between mb-3 px-1">
           <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Recent Activity
           </h2>
-          <Link
-            href="/transactions"
-            className="inline-flex items-center gap-1 text-xs font-bold text-[#00A3E0] hover:text-[#008ec2]"
-          >
-            <span>View All</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          {isAuthenticated && (
+            <Link
+              href="/transactions"
+              className="inline-flex items-center gap-1 text-xs font-bold text-[#00A3E0] hover:text-[#008ec2]"
+            >
+              <span>View All</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          )}
         </div>
 
-        <div className="space-y-2.5">
-          {recentTransactions.map((tx) => (
-            <TransactionItem
-              key={tx.id}
-              transaction={tx}
-              onClick={() => setSelectedTx(tx)}
-            />
-          ))}
-        </div>
+        {!isAuthenticated || recentTransactions.length === 0 ? (
+          <EmptyState
+            icon={History}
+            title={isAuthenticated ? "No recent trips" : "Sign In to View Trips"}
+            description={
+              isAuthenticated
+                ? "Your bus ride deductions and wallet recharges will appear here."
+                : "Log in to your TapGo account to access your full commute history, balance, and downloadable receipts."
+            }
+            actionLabel={isAuthenticated ? undefined : "Sign In to TapGo"}
+            onAction={isAuthenticated ? undefined : () => { window.location.href = "/auth/login"; }}
+          />
+        ) : (
+          <div className="space-y-2.5">
+            {recentTransactions.map((tx) => (
+              <TransactionItem
+                key={tx.id}
+                transaction={tx}
+                onClick={() => setSelectedTx(tx)}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Modals */}
-      <CardDetailsModal
-        card={activeCard}
-        isOpen={isCardModalOpen}
-        onClose={() => setIsCardModalOpen(false)}
-        onToggleFreeze={toggleFreezeCard}
-        onSetPrimary={setActiveCard}
-      />
+      {isAuthenticated && (
+        <CardDetailsModal
+          card={activeCard}
+          isOpen={isCardModalOpen}
+          onClose={() => setIsCardModalOpen(false)}
+          onToggleFreeze={toggleFreezeCard}
+          onSetPrimary={setActiveCard}
+        />
+      )}
 
       <ReceiptModal
         transaction={selectedTx}

@@ -10,7 +10,7 @@ import { Bus, Smartphone, Lock, Fingerprint, ArrowRight, Sparkles, ShieldCheck }
 
 export default function LoginPage() {
   const router = useRouter();
-  const { updateUser } = useApp();
+  const { login } = useApp();
 
   const [phone, setPhone] = useState("0788123456");
   const [pin, setPin] = useState("1234");
@@ -24,7 +24,7 @@ export default function LoginPage() {
 
     try {
       const session = await authService.loginWithPhone(phone, pin);
-      updateUser(session.user);
+      login(session.user);
       router.push("/");
     } catch {
       setError("Invalid phone number or PIN. Please try again.");
@@ -40,16 +40,18 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-[85vh] flex flex-col justify-center max-w-sm mx-auto py-8">
-      {/* Brand Icon & Heading */}
-      <div className="text-center mb-8">
-        <div className="w-14 h-14 rounded-2xl bg-navy-900 dark:bg-brand-600 text-white mx-auto flex items-center justify-center shadow-lg shadow-navy-900/20 mb-3">
-          <Bus className="w-7 h-7" />
-        </div>
-        <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-          Welcome to TapGo
+      {/* Brand Icon & Heading with AC Mobility logo */}
+      <div className="text-center mb-6">
+        <img
+          src="/images/ac-mobility.png"
+          alt="AC Mobility - Smart transport redefined"
+          className="h-11 w-auto mx-auto object-contain mb-3"
+        />
+        <h1 className="text-2xl font-black tracking-tight text-[#0B2050] dark:text-white">
+          Sign In to TapGo
         </h1>
         <p className="text-xs text-slate-500 mt-1">
-          Rwanda's smart public transport wallet
+          Rwanda's smart public transport wallet • AC Mobility
         </p>
       </div>
 
@@ -64,7 +66,7 @@ export default function LoginPage() {
 
           {/* Phone Number */}
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
               Phone Number
             </label>
             <div className="relative">
@@ -77,7 +79,7 @@ export default function LoginPage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="788 123 456"
-                className="w-full pl-20 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 font-mono text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy-900"
+                className="w-full pl-20 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 font-mono text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#00A3E0]"
                 required
               />
             </div>
@@ -86,12 +88,12 @@ export default function LoginPage() {
           {/* PIN / Password */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                 Security PIN
               </label>
               <Link
                 href="/auth/forgot-password"
-                className="text-[11px] font-semibold text-brand-600 hover:underline"
+                className="text-[11px] font-bold text-[#00A3E0] hover:underline"
               >
                 Forgot PIN?
               </Link>
@@ -106,7 +108,7 @@ export default function LoginPage() {
                 onChange={(e) => setPin(e.target.value)}
                 placeholder="••••"
                 maxLength={6}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 font-mono text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy-900 tracking-widest"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 font-mono text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#00A3E0] tracking-widest"
                 required
               />
             </div>
@@ -117,9 +119,9 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={handleQuickDemoFill}
-              className="w-full py-1.5 px-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/40 text-[11px] font-semibold text-amber-800 dark:text-amber-300 flex items-center justify-center gap-1.5 hover:bg-amber-100"
+              className="w-full py-1.5 px-2.5 rounded-lg bg-sky-50 dark:bg-sky-950/30 border border-sky-200/80 dark:border-sky-900/40 text-[11px] font-bold text-[#008ec2] flex items-center justify-center gap-1.5 hover:bg-sky-100"
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <Sparkles className="w-3.5 h-3.5 text-[#00A3E0]" />
               <span>Fill Demo Commuter (Jean Bosco)</span>
             </button>
           </div>
@@ -129,7 +131,7 @@ export default function LoginPage() {
               type="submit"
               variant="primary"
               size="lg"
-              className="w-full text-sm"
+              className="w-full text-sm bg-[#00A3E0] hover:bg-[#008ec2] text-white font-bold"
               isLoading={isLoading}
               rightIcon={<ArrowRight className="w-4 h-4" />}
             >
@@ -140,7 +142,7 @@ export default function LoginPage() {
               type="button"
               variant="outline"
               size="md"
-              className="w-full"
+              className="w-full font-semibold"
               onClick={handleLogin}
               leftIcon={<Fingerprint className="w-4 h-4 text-purple-600" />}
             >
@@ -152,7 +154,7 @@ export default function LoginPage() {
         {/* Footer Link */}
         <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-500">
           Don't have a TapGo account?{" "}
-          <Link href="/auth/register" className="font-bold text-navy-900 dark:text-brand-400 hover:underline">
+          <Link href="/auth/register" className="font-bold text-[#00A3E0] hover:underline">
             Register Here
           </Link>
         </div>
