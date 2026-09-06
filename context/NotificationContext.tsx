@@ -11,6 +11,7 @@ interface NotificationContextType {
   markAsRead: (id: string) => void;
   markAllAsRead: () => void;
   clearAll: () => void;
+  resetNotifications: () => void;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -18,6 +19,10 @@ const NotificationContext = createContext<NotificationContextType | undefined>(u
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [notifications, setNotifications] = useState<AppNotification[]>(() => {
     if (typeof window !== "undefined") {
+      const authFlag = localStorage.getItem("tapgo_auth_logged_in");
+      if (authFlag === "false") {
+        return [];
+      }
       const saved = localStorage.getItem("tapgo_notifications");
       if (saved) {
         try {
@@ -31,7 +36,12 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   });
 
   useEffect(() => {
-    localStorage.setItem("tapgo_notifications", JSON.stringify(notifications));
+    if (typeof window !== "undefined") {
+      const authFlag = localStorage.getItem("tapgo_auth_logged_in");
+      if (authFlag !== "false") {
+        localStorage.setItem("tapgo_notifications", JSON.stringify(notifications));
+      }
+    }
   }, [notifications]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
@@ -58,6 +68,16 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const clearAll = () => {
     setNotifications([]);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("tapgo_notifications");
+    }
+  };
+
+  const resetNotifications = () => {
+    setNotifications(MOCK_NOTIFICATIONS);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("tapgo_notifications", JSON.stringify(MOCK_NOTIFICATIONS));
+    }
   };
 
   return (
@@ -69,6 +89,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         markAsRead,
         markAllAsRead,
         clearAll,
+        resetNotifications,
       }}
     >
       {children}

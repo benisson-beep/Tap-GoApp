@@ -52,7 +52,7 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { addNotification } = useNotifications();
+  const { addNotification, clearAll: clearAllNotifications, resetNotifications } = useNotifications();
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
@@ -147,6 +147,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setUser(loggedInUser);
     setCards(MOCK_CARDS);
     setTransactions(MOCK_TRANSACTIONS);
+    resetNotifications();
     if (typeof window !== "undefined") {
       localStorage.setItem("tapgo_auth_logged_in", "true");
       localStorage.setItem("tapgo_user", JSON.stringify(loggedInUser));
@@ -160,12 +161,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setUser(null);
     setCards([]);
     setTransactions([]);
+    clearAllNotifications();
     if (typeof window !== "undefined") {
       localStorage.setItem("tapgo_auth_logged_in", "false");
       localStorage.removeItem("tapgo_user");
       localStorage.removeItem("tapgo_cards");
       localStorage.removeItem("tapgo_transactions");
       localStorage.removeItem("tapgo_session_v1");
+      localStorage.removeItem("tapgo_notifications");
     }
   };
 
