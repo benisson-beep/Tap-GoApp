@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/common/Button";
 import { useApp } from "@/context/AppContext";
 import { Smartphone, CheckCircle2, RotateCcw, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-export default function VerifyOtpPage() {
+function VerifyOtpContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const phoneParam = searchParams.get("phone") || "0788123456";
@@ -96,7 +96,10 @@ export default function VerifyOtpPage() {
         Verify Your Phone
       </h1>
       <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
-        We sent a 6-digit verification code via SMS to <span className="font-semibold text-slate-800 dark:text-slate-200">+250 {phoneParam}</span>
+        We sent a 6-digit verification code via SMS to{" "}
+        <span className="font-semibold text-slate-800 dark:text-slate-200">
+          +250 {phoneParam}
+        </span>
       </p>
 
       <div className="mt-6 p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-card">
@@ -174,5 +177,19 @@ export default function VerifyOtpPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function VerifyOtpPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-[85vh] flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-navy-900"></div>
+        </div>
+      }
+    >
+      <VerifyOtpContent />
+    </Suspense>
   );
 }
